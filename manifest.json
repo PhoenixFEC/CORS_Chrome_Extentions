@@ -1,0 +1,44 @@
+{
+    "manifest_version": 2,
+    "name": "CORS HTTP",
+    "version": "0.1.0",
+    "description": "跨域请求助手",
+
+    "background": {
+        "scripts": ["utils/background.js"],
+        "persistent": true
+    },
+    "browser_action": {
+        "default_icon": {
+            "16": "images/icon_cors16.png",
+            "32": "images/icon_cors32.png",
+            "48": "images/icon_cors48.png",
+            "128": "images/icon_cors128.png"
+        }
+    },
+    "icons": {
+        "16": "images/icon_cors16.png",
+        "32": "images/icon_cors32.png",
+        "48": "images/icon_cors48.png",
+        "128": "images/icon_cors128.png"
+    },
+
+    "options_page": "options/options.html",
+    "options_ui": {
+        "page": "options/options.html",
+        "chrome_style": true,
+        "open_in_tab": false
+    },
+
+    "permissions": [
+        "debugger",
+        "activeTab",
+        "contextMenus",
+        "storage",
+        "<all_urls>",
+        "webRequest",
+        "webRequestBlocking",
+        "declarativeContent",
+        "notifications"
+    ]
+}

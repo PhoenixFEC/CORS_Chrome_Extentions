@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Options Config</title>
+    <style>
+        html * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;
+            font-size: 1rem;
+            color: #555;
+            line-height: 1.6;
+        }
+        .main-frame {
+            width: 340px;
+            padding: 10px;
+        }
+        .btn-group {
+            /* text-align: right; */
+            margin-bottom: 15px;
+        }
+        .radio-checkbox__switch {
+            display: inline-block;
+            border: 1px solid rgba(0,0,0,.15);
+            white-space: nowrap;
+            overflow: hidden;
+            width: 4.25rem;
+            border-radius: .875rem;
+        }
+        .radio-checkbox__label {
+            display: block;
+            text-align: center;
+            transition: .3s ease-in-out;
+            cursor: pointer;
+            width: 6.75rem;
+            height: 1.75rem;
+            margin: 0 0 0 -1px;
+            position: relative;
+            left: -2.45rem;
+        }
+        .radio-checkbox__label.radio-checkbox--checked {
+            left: 0;
+        }
+        .radio-checkbox__label > span {
+            display: inline-block;
+            vertical-align: top;
+        }
+        .radio-checkbox__indicator {
+            display: inline-block;
+            width: 1.75rem;
+            height: 1.75rem;
+            box-shadow: none;
+            box-sizing: border-box;
+            border-radius: 50%;
+            background: #fff;
+            transition: .1s ease-in-out;
+            user-select: none;
+            position: relative;
+            margin: 0;
+            border: 0;
+            z-index: 1;
+        }
+        .radio-checkbox__on, .radio-checkbox__off {
+            width: 50%;
+            position: absolute;
+            display: inline-block;
+            height: 1.75rem;
+            line-height: 1.75rem;
+        }
+        .radio-checkbox__on {
+            left: 0;
+            color: #fff;
+            background-color: #0275d8;
+            padding-right: .875rem;
+        }
+        .radio-checkbox__off {
+            right: 0;
+            color: #333;
+            background-color: #eee;
+            padding-left: .875rem;
+        }
+        .x-custom__origin--input,
+        .x-custom__header--input,
+        .x-custom__method--input {
+            width: 100%;
+            border: 1px solid #ccc;
+            resize: none;
+            outline: 0 none;
+            font-size: 12px;
+        }
+        .desc-txt {
+            color: #ccc;
+            font-size: 12px;
+        }
+        .x-custom__origin--input::-webkit-input-placeholder,
+        .x-custom__header--input::-webkit-input-placeholder,
+        .x-custom__method--input::-webkit-input-placeholder {
+            color: #ccc;
+            font-size: 12px;
+        }
+        ._buttons-button {
+            display: inline-block;
+            font-weight: 400;
+            line-height: 1.25;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            border: 1px solid transparent;
+            transition: all .2s ease-in-out;
+            padding: .5rem 1rem;
+            font-size: 1rem;
+            border-radius: .25rem;
+        }
+        ._buttons-danger, ._buttons-error {
+            color: #333;
+            /* background-color: #d9534f; */
+            border-color: #ccc;
+            box-shadow: inset 0 1px 0 hsla(0,0%,100%,.15), 0 1px 1px rgba(0,0,0,.075);
+        }
+        .s-box {
+            padding-bottom: 20px;
+            background-color: #fff;
+            border-bottom: 3px dashed #ddd;
+        }
+        .s-box:last-child {
+            border-bottom-width: 0;
+        }
+    </style>
+</head>
+<body>
+<div class="main-frame">
+    <div class="s-box btn-group">
+        <div class="radio-checkbox__switch" id="show_badge">
+            <label class="radio-checkbox__label">
+                <span class="radio-checkbox__indicator"></span>
+                <span>
+                    <span class="radio-checkbox__on">On</span>
+                    <span class="radio-checkbox__off">Off</span>
+                </span>
+            </label>
+        </div>
+    </div>
+    <div class="s-box">
+        <div class="x-custom__origin">
+            <head>Custom Access-Control-Allow-Origin:</head>
+            <textarea name="xCustomOrigin" class="x-custom__origin--input" id="xCustomOrigin" cols="30" rows="3"
+                placeholder="*"></textarea>
+        </div>
+        <div class="x-custom__header">
+            <head>Custom Access-Control-Allow-Headers:</head>
+            <div class="desc-txt">Default: '*', Optional Origin, X-Requested-With, Content-Type, Accept</div>
+            <!-- CORS on Nginx <Access-Control-Allow-Headers>: DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range -->
+            <textarea name="xCustomHeader" class="x-custom__header--input" id="xCustomHeader" cols="30" rows="3"
+                placeholder="*"></textarea>
+        </div>
+        <div class="x-custom__method">
+            <head>Custom Access-Control-Allow-Method:</head>
+            <div class="desc-txt">Default：GET, PUT, POST, DELETE, HEAD</div>
+            <textarea name="xCustomMethod" class="x-custom__method--input" id="xCustomMethod" cols="30" rows="3"
+                placeholder="GET, PUT, POST, DELETE, HEAD"></textarea>
+        </div>
+        <div class="x-custom__types">
+            <head>Include Types:</head>
+            <div class="desc-txt">Default (all)</div>
+            <textarea name="xCustomIncludeTypes" class="x-custom__types--input" id="xCustomIncludeTypes" cols="30" rows="3"
+                placeholder=""></textarea>
+        </div>
+        <div class="x-custom__types">
+            <head>Exclude Types:</head>
+            <textarea name="xCustomExcludeTypes" class="x-custom__types--input" id="xCustomExcludeTypes" cols="30" rows="3"
+                placeholder=""></textarea>
+        </div>
+        <div class="x-custom__config">
+            <button class="_buttons-button _buttons-danger" type="button" id="xCustomConfigSave">Save</button>
+        </div>
+    </div>
+</div>
+<script src="../utils/zepto.min.js"></script>
+<script type="module" src="./options.js"></script>
+</body>
+</html>
