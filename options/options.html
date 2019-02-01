@@ -97,6 +97,11 @@
             color: #ccc;
             font-size: 12px;
         }
+        .x-custom-desc {
+            font-size: 12px;
+            color: #333;
+        }
+        .x-custom__types--input::-webkit-input-placeholder,
         .x-custom__types--input::-webkit-input-placeholder,
         .x-custom__origin--input::-webkit-input-placeholder,
         .x-custom__header--input::-webkit-input-placeholder,
@@ -146,7 +151,7 @@
 <body>
 <div class="main-frame">
     <div class="s-box btn-group">
-        <div class="radio-checkbox__switch" id="show_badge">
+        <div class="radio-checkbox__switch" id="showBadge">
             <label class="radio-checkbox__label">
                 <span class="radio-checkbox__indicator"></span>
                 <span>
@@ -157,23 +162,41 @@
         </div>
     </div>
     <div class="s-box">
+        <!-- <div class="x-custom__origin--url">
+            <head>Origin: </head>
+            <input name="xCustomOriginUrl" class="x-custom__origin--input" id="xCustomOriginUrl" placeholder="" />
+        </div> -->
         <div class="x-custom__origin">
             <head>Custom Access-Control-Allow-Origin:</head>
+            <div class="desc-txt">Default: '*'</div>
             <textarea name="xCustomOrigin" class="x-custom__origin--input" id="xCustomOrigin" cols="30" rows="3"
                 placeholder="*"></textarea>
         </div>
         <div class="x-custom__header">
             <head>Custom Access-Control-Allow-Headers:</head>
-            <div class="desc-txt">Default: '*', Optional Origin, X-Requested-With, Content-Type, Accept</div>
+            <div class="desc-txt">Default: '*' <br />Optional: X-Requested-With, Content-Type, Accept etc.</div>
             <!-- CORS on Nginx <Access-Control-Allow-Headers>: DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range -->
             <textarea name="xCustomHeaders" class="x-custom__header--input" id="xCustomHeaders" cols="30" rows="3"
                 placeholder="*"></textarea>
         </div>
         <div class="x-custom__method">
-            <head>Custom Access-Control-Allow-Method:</head>
-            <div class="desc-txt">Default：GET, PUT, POST, DELETE, HEAD</div>
+            <head>Custom Access-Control-Allow-Methods:</head>
+            <div class="desc-txt">Default：'*'<br />Optional: GET, PUT, POST, DELETE, HEAD etc.</div>
             <textarea name="xCustomMethod" class="x-custom__method--input" id="xCustomMethod" cols="30" rows="3"
-                placeholder="GET, PUT, POST, DELETE, HEAD"></textarea>
+                placeholder="*"></textarea>
+        </div>
+        <div class="x-custom__credentials">
+            <head>Access-Control-Allow-Credentials:</head>
+            <div class="desc-txt"></div>
+            <div class="radio-checkbox__switch" id="xCustomCredentials">
+                <label class="radio-checkbox__label">
+                    <span class="radio-checkbox__indicator"></span>
+                    <span>
+                        <span class="radio-checkbox__on">On</span>
+                        <span class="radio-checkbox__off">Off</span>
+                    </span>
+                </label>
+            </div>
         </div>
         <div class="x-custom__types">
             <head>Include Types:</head>
@@ -189,6 +212,11 @@
         <div class="x-custom__config">
             <button class="_buttons-button _buttons-danger" type="button" id="xCustomConfigSave">Save</button>
             <span class="saved-msg" id="savedMsg"></span>
+        </div>
+        <div class="x-custom-desc">
+            [[[Tips]]]<br />
+            1. 所有设置项若是多条数据，请以半角逗号<span style="color: red">（,）</span>隔开；<br />
+            2. 设置Include Types和exclude Types时，若有重复项则遵从exclude Types；
         </div>
     </div>
 </div>

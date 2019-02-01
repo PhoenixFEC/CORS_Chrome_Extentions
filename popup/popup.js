@@ -4,7 +4,7 @@ $(function() {
     // -------------------------------
     // 显示/隐藏 badge，开关CORS跨域
     // -------------------------------
-    $('#show_badge').click(function() {
+    $('#showBadge').click(function() {
         var jQthis = $(this);
         chrome.extension.getBackgroundPage().switchBadge();
         chrome.extension.getBackgroundPage().getStorage('showBadge', function(result) {

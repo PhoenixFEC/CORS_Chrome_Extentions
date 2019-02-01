@@ -3,7 +3,14 @@
 chrome.runtime.onInstalled.addListener(function() {
     window.globalVar = {
         CONTEXTMENU_ID: 'CORS_HTTP_SWITCH',
-        tmpResponseHeaders: {},
+        tmpResponseHeaders: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': '*',
+            'Access-Control-Allow-Headers': '*',
+            'Access-Control-Allow-Credentials': 'false',
+            'webRequestIncludeTypes': '',
+            'webRequestExcludeTypes': ''
+        },
         isShowBadge: false
     };
     // window.CONTEXTMENU_ID = 'CORS_HTTP_SWITCH';
@@ -13,11 +20,21 @@ chrome.runtime.onInstalled.addListener(function() {
     // 从选项同步的云上获取当前选项配置, 并缓存
     getStorage([
         'Access-Control-Allow-Origin',
-        'Access-Control-Allow-Method',
+        'Access-Control-Allow-Methods',
         'Access-Control-Allow-Headers',
+        'Access-Control-Allow-Credentials',
         'webRequestIncludeTypes',
         'webRequestExcludeTypes'
     ], 'sync', result => {
+        for(const key in result) {
+            if(result[key]) continue;
+            if(key !== 'webRequestIncludeTypes' && key !== 'webRequestExcludeTypes') {
+                result[key] = '*';
+            }
+            else {
+                result[key] = '';
+            }
+        }
         window.globalVar.tmpResponseHeaders = Object.assign({}, window.globalVar.tmpResponseHeaders, result);
     }).catch(err => console.log(err));
 
@@ -26,7 +43,7 @@ chrome.runtime.onInstalled.addListener(function() {
     chrome.contextMenus.onClicked.addListener(switchBadge);
     // 监听浏览器点击图标
     chrome.browserAction.onClicked.addListener(switchBadge);
-    // 监听当前开启状态存储值的变更
+    // 监听当前开启状态存储值的变更，并更新当前值
     chrome.storage.onChanged.addListener(function(changes, namespace) {
         if(changes["showBadge"]) window.globalVar.isShowBadge = changes["showBadge"].newValue;
     });
@@ -93,29 +110,37 @@ function switchBadge() {
  * @returns new details.responseHeaders
  */
 function setResponseHeader(details, config) {
-
     const includeTypes = config.webRequestIncludeTypes && config.webRequestIncludeTypes.replace(/ /g, '').split(',');
-    console.log(details, config, config.webRequestIncludeTypes, includeTypes)
+    const excludeTypes = config.webRequestExcludeTypes && config.webRequestExcludeTypes.replace(/ /g, '').split(',');
+
+    // 排除不在配置范围的请求
+    if(includeTypes.length > 0 && !includeTypes.includes(details.type)) return null;
+    if(excludeTypes.length > 0 && excludeTypes.includes(details.type)) return null;
+
+    // console.log(details, config)
 
     if(hasCorsHeader(details.responseHeaders, 'Access-Control-Allow-Origin')) {
+        console.log(details.responseHeaders)
         const curKeyIndex = hasCorsHeader(details.responseHeaders, 'Access-Control-Allow-Origin', true);
-        details.responseHeaders[curKeyIndex].value = config['Access-Control-Allow-Origin'];
+        if(details.responseHeaders[curKeyIndex].value) {
+            details.responseHeaders[curKeyIndex].value = config['Access-Control-Allow-Origin']  || details.responseHeaders[curKeyIndex].value;
+        }
     }
     else {
         details.responseHeaders.push({
             name: 'Access-Control-Allow-Origin',
-            value: config['Access-Control-Allow-Origin']
+            value: config['Access-Control-Allow-Origin'] || details.initiator
         });
     }
 
-    if(hasCorsHeader(details.responseHeaders, 'Access-Control-Allow-Method')) {
-        const curKeyIndex = hasCorsHeader(details.responseHeaders, 'Access-Control-Allow-Method', true);
-        details.responseHeaders[curKeyIndex].value = config['Access-Control-Allow-Method'];
+    if(hasCorsHeader(details.responseHeaders, 'Access-Control-Allow-Methods')) {
+        const curKeyIndex = hasCorsHeader(details.responseHeaders, 'Access-Control-Allow-Methods', true);
+        details.responseHeaders[curKeyIndex].value = config['Access-Control-Allow-Methods'];
     }
     else {
         details.responseHeaders.push({
-            name: 'Access-Control-Allow-Method',
-            value: config['Access-Control-Allow-Method']
+            name: 'Access-Control-Allow-Methods',
+            value: config['Access-Control-Allow-Methods']
         });
     }
 
@@ -127,6 +152,17 @@ function setResponseHeader(details, config) {
         details.responseHeaders.push({
             name: 'Access-Control-Allow-Headers',
             value: config['Access-Control-Allow-Headers']
+        });
+    }
+
+    if(hasCorsHeader(details.responseHeaders, 'Access-Control-Allow-Credentials')) {
+        const curKeyIndex = hasCorsHeader(details.responseHeaders, 'Access-Control-Allow-Credentials', true);
+        details.responseHeaders[curKeyIndex].value = config['Access-Control-Allow-Credentials'] === 'false' || details.responseHeaders[curKeyIndex].value;
+    }
+    else {
+        details.responseHeaders.push({
+            name: 'Access-Control-Allow-Credentials',
+            value: config['Access-Control-Allow-Credentials']
         });
     }
 
@@ -144,7 +180,7 @@ function hasCorsHeader(arr, key, returnIndex) {
     let isHere = -1;
     if(Object.prototype.toString.call([]) === '[object Array]') {
         isHere = arr.findIndex((item) => {
-            item.name && item.name === key;
+            return item.name && item.name === key;
         });
     }
     return  returnIndex ? isHere : isHere > -1;
