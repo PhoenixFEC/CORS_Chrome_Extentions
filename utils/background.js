@@ -1,6 +1,6 @@
 'use strict';
 
-chrome.runtime.onInstalled.addListener(function() {
+chrome.runtime.onInstalled.addListener(() => {
     window.globalVar = {
         CONTEXTMENU_ID: 'CORS_HTTP_SWITCH',
         tmpResponseHeaders: {
@@ -13,9 +13,6 @@ chrome.runtime.onInstalled.addListener(function() {
         },
         isShowBadge: false
     };
-    // window.CONTEXTMENU_ID = 'CORS_HTTP_SWITCH';
-    // window.tmpResponseHeaders = {};
-    // let isShowBadge = false;
 
     // 从选项同步的云上获取当前选项配置, 并缓存
     getStorage([
@@ -44,14 +41,13 @@ chrome.runtime.onInstalled.addListener(function() {
     // 监听浏览器点击图标
     chrome.browserAction.onClicked.addListener(switchBadge);
     // 监听当前开启状态存储值的变更，并更新当前值
-    chrome.storage.onChanged.addListener(function(changes, namespace) {
+    chrome.storage.onChanged.addListener((changes, namespace) => {
         if(changes["showBadge"]) window.globalVar.isShowBadge = changes["showBadge"].newValue;
     });
     // 监听来自选项最新更新的配置数据
-    chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if(sender.id === 'fjmicobohjblipgaklggfkcdkomdgglk') {
             window.globalVar.tmpResponseHeaders = Object.assign({}, window.globalVar.tmpResponseHeaders, request);
-            // console.log(window.globalVar.tmpResponseHeaders, request, sender)
         }
     });
 
@@ -88,17 +84,17 @@ chrome.runtime.onInstalled.addListener(function() {
 // 监听图标状态变更的callback
 // 变更当前图标状态
 function switchBadge() {
-    getStorage('showBadge', function(result) {
+    getStorage('showBadge', result => {
         if(!result.showBadge) {
             chrome.browserAction.setBadgeText({text: 'On'});
             chrome.browserAction.setBadgeBackgroundColor({color: [205, 70, 70, 255]});
             chrome.contextMenus.update(window.globalVar.CONTEXTMENU_ID, {title: '关闭CORS跨域', checked: true});
-            chrome.storage.local.set({ 'showBadge': true });
+            setStorage({ 'showBadge': true })
         } else {
             chrome.browserAction.setBadgeText({text: ''});
             chrome.browserAction.setBadgeBackgroundColor({color: [0, 0, 0, 0]});
             chrome.contextMenus.update(window.globalVar.CONTEXTMENU_ID, {title: '打开CORS跨域', checked: false});
-            chrome.storage.local.set({ 'showBadge': false });
+            setStorage({ 'showBadge': false })
         }
     });
 }
@@ -116,8 +112,6 @@ function setResponseHeader(details, config) {
     // 排除不在配置范围的请求
     if(includeTypes.length > 0 && !includeTypes.includes(details.type)) return null;
     if(excludeTypes.length > 0 && excludeTypes.includes(details.type)) return null;
-
-    // console.log(details, config)
 
     if(hasCorsHeader(details.responseHeaders, 'Access-Control-Allow-Origin')) {
         console.log(details.responseHeaders)
@@ -197,7 +191,7 @@ function getStorage(key, scope, callback) {
     const curScope = arguments.length > 2 ? scope : 'local';
     const curCallback = arguments.length > 2 ? callback : scope;
     const promise = new Promise((resolve, reject) => {
-        chrome.storage[curScope].get(key, function(result) {
+        chrome.storage[curScope].get(key, result => {
             if (chrome.extension.lastError) {
                 console.log("Got expected error: " + chrome.extension.lastError.message);
                 return null;
@@ -219,7 +213,7 @@ function getStorage(key, scope, callback) {
 function setStorage(keyValue, scope, callback) {
     const curScope = arguments.length > 2 ? scope : 'local';
     const curCallback = arguments.length > 2 ? callback : scope;
-    chrome.storage[curScope].set(keyValue, function(result) {
+    chrome.storage[curScope].set(keyValue, result => {
         if (chrome.extension.lastError) {
             console.log("Got expected error: " + chrome.extension.lastError.message);
             return null;
